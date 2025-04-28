@@ -25,7 +25,7 @@
   <div class="container">
     <h1 class="mb-4 text-center">🛒 My Grocery List</h1>
     <div id="frequentItems" class="mb-3">
-      <p>Frequently Used Items:</p>
+      <p><strong>Quick Add Items:</strong></p>
       <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Milk')">Milk</button>
       <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Bread')">Bread</button>
       <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Eggs')">Eggs</button>
@@ -36,12 +36,12 @@
       <input type="text" id="itemInput" class="form-control" placeholder="Add a grocery item"
         aria-label="Grocery item" />
       <button class="btn btn-primary" onclick="addItem()">Add</button>
-      <button class="btn btn-warning" onclick="startVoiceInput()">🎤 Voice Input</button>
+      <button id="voiceButton" class="btn btn-warning" onclick="startVoiceInput()">🎤 Voice Input</button>
     </div>
     <ul id="groceryList" class="list-group mb-3" aria-live="polite"></ul>
     <button class="btn btn-secondary mb-4" onclick="readList()">🔊 Read Aloud List</button>
     <h2 class="mt-5">Completed Items History</h2>
-    <ul id="historyList" class="list-group"></ul>
+    <ul id="historyList" class="list-group" aria-live="polite"></ul>
     <button class="btn btn-secondary mb-4" onclick="readHistory()">🔊 Read Completed Items</button>
   </div>
 
@@ -129,7 +129,7 @@
         document.getElementById("itemInput").value = transcript;
       };
       recognition.onerror = function (event) {
-        alert("Speech recognition error: " + event.error);
+        alert("Sorry, voice input failed. Please try again or type manually.");
       };
     }
 
@@ -156,6 +156,10 @@
       navigator.serviceWorker.register("sw.js").then(() => {
         console.log("Service Worker Registered");
       });
+    }
+
+    if (!('webkitSpeechRecognition' in window)) {
+      document.getElementById('voiceButton').style.display = 'none';
     }
   </script>
 </body>
