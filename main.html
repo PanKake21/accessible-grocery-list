@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessible Grocery List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0d6efd">
+  <style>
+    body {
+      padding: 2rem;
+      background-color: #f8f9fa;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="mb-4 text-center">🛒 My Grocery List</h1>
+    <div id="frequentItems" class="mb-3">
+      <p>Frequently Used Items:</p>
+      <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Milk')">Milk</button>
+      <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Bread')">Bread</button>
+      <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Eggs')">Eggs</button>
+      <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Cheese')">Cheese</button>
+      <button class="btn btn-outline-primary btn-sm" onclick="quickAdd('Rice')">Rice</button>
+    </div>
+    <div class="input-group mb-3">
+      <input type="text" id="itemInput" class="form-control" placeholder="Add a grocery item"
+        aria-label="Grocery item" />
+      <button class="btn btn-primary" onclick="addItem()">Add</button>
+      <button class="btn btn-warning" onclick="startVoiceInput()">🎤 Voice Input</button>
+    </div>
+    <ul id="groceryList" class="list-group mb-3" aria-live="polite"></ul>
+    <button class="btn btn-secondary mb-4" onclick="readList()">🔊 Read Aloud List</button>
+    <h2 class="mt-5">Completed Items History</h2>
+    <ul id="historyList" class="list-group"></ul>
+    <button class="btn btn-secondary mb-4" onclick="readHistory()">🔊 Read Completed Items</button>
+  </div>
+
+  <script>
+
+    let itemCounts = {};
+    function addItem() {
+      const input = document.getElementById("itemInput");
+      const value = input.value.trim();
+      if (value !== "") {
+
+        // Update count
+        itemCounts[value] = (itemCounts[value] || 0) + 1;
+
+        // If item added 3 times, create a Frequent Use Button automatically
+        if (itemCounts[value] === 3) {
+          addFrequentButton(value);
+        }
+
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.innerHTML = `
+      <span>${value}</span>
+      <div>
+        <button class="btn btn-sm btn-success me-1" onclick="markDone(this)" aria-label="Mark item as done">✓</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteItem(this)" aria-label="Delete item">✕</button>
+      </div>
+    `;
+        document.getElementById('groceryList').appendChild(li);
+        input.value = "";
+        input.focus();
+      }
+    }
+    function addFrequentButton(itemName) {
+      const frequentItemsDiv = document.getElementById('frequentItems');
+      const button = document.createElement('button');
+      button.className = 'btn btn-outline-primary btn-sm me-1';
+      button.textContent = itemName;
+      button.onclick = function () {
+        quickAdd(itemName);
+      };
+      frequentItemsDiv.appendChild(button);
+    }
+    function quickAdd(itemName) {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-center";
+      li.innerHTML = `
+    <span>${itemName}</span>
+    <div>
+      <button class="btn btn-sm btn-success me-1" onclick="markDone(this)" aria-label="Mark item as done">✓</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteItem(this)" aria-label="Delete item">✕</button>
+    </div>
+  `;
+      document.getElementById('groceryList').appendChild(li);
+    }
+
+    function deleteItem(button) {
+      const li = button.closest("li");
+      li.remove();
+    }
+
+    function markDone(button) {
+      const li = button.closest('li');
+      const item = li.querySelector('span');
+
+      item.classList.toggle('completed');
+
+      if (item.classList.contains('completed')) {
+
+        const historyItem = document.createElement('li');
+        historyItem.className = "list-group-item";
+        historyItem.textContent = item.textContent;
+        document.getElementById('historyList').appendChild(historyItem);
+
+        li.remove();
+      }
+    }
+
+    function startVoiceInput() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.start();
+      recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById("itemInput").value = transcript;
+      };
+      recognition.onerror = function (event) {
+        alert("Speech recognition error: " + event.error);
+      };
+    }
+
+    function readList() {
+      const items = document.querySelectorAll("#groceryList li span");
+      const list = Array.from(items).map(el => el.textContent).join(", ");
+      const utterance = new SpeechSynthesisUtterance("Your grocery list includes: " + list);
+      speechSynthesis.speak(utterance);
+    }
+
+    function readHistory() {
+      const items = document.querySelectorAll("#historyList li");
+      const list = Array.from(items).map(el => el.textContent).join(", ");
+      if (list.length > 0) {
+        const utterance = new SpeechSynthesisUtterance("Your completed items are: " + list);
+        speechSynthesis.speak(utterance);
+      } else {
+        const utterance = new SpeechSynthesisUtterance("You have no completed items.");
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").then(() => {
+        console.log("Service Worker Registered");
+      });
+    }
+  </script>
+</body>
+
+</html>
