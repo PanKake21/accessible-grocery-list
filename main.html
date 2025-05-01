@@ -30,12 +30,13 @@
       <button class="btn btn-outline-primary btn-sm me-1" onclick="quickAdd('Cheese')">Cheese</button>
       <button class="btn btn-outline-primary btn-sm" onclick="quickAdd('Rice')">Rice</button>
     </div>
+    
     <!-- Input Section -->
     <div class="input-group mb-3">
       <input type="text" id="itemInput" class="form-control" placeholder="Add a grocery item" aria-label="Grocery item">
       <input type="number" id="itemQty" class="form-control" placeholder="Qty" min="1" value="1" aria-label="Quantity">
       <button class="btn btn-primary" onclick="addItem()">Add</button>
-      <button id="voiceButton" class="btn btn-warning" onclick="startVoiceInput()">🎤 Voice Input</button>
+      <button id="voiceButton" class="btn btn-warning" onclick="startVoiceInput()">🎤 <span class="d-none d-flex">Voice Input</span>
     </div>
 
     <!-- Grocery List -->
