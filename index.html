@@ -34,10 +34,9 @@
     <!-- Input -->
     <div class="input-group mb-3">
       <input type="text" id="itemInput" class="form-control" placeholder="Add a grocery item" aria-label="Grocery item">
-      <input type="number" id="itemQty" class="form-control" placeholder="Qty" min="1" value="1" aria-label="Quantity" style="max-width: 80px;">
+      <input type="number" id="itemQty" class="form-control form-control-sm w-auto" placeholder="Qty" min="1" value="1" aria-label="Quantity">
       <button class="btn btn-primary" onclick="addItem()">Add</button>
-      <button id="voiceButton" class="btn btn-warning" onclick="startVoiceInput()">🎤 <span class="d-none d-sm-inline">Voice Input</span>
-      </button>
+      <button id="voiceButton" class="btn btn-warning" onclick="startVoiceInput()">🎤 <span class="d-none d-sm-inline">Voice Input</span></button>
     </div>
 
     <!-- Grocery List -->
