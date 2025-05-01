@@ -1,0 +1,27 @@
+body {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: gray;
+}
+
+body.dark {
+  background-color: #212529;
+  color: #f8f9fa;
+}
+
+body.dark ::placeholder {
+  color: #f8f9fa;
+  opacity: 1;
+}
+
+body.dark .form-control,
+body.dark .list-group-item,
+body.dark .btn {
+  background-color: #343a40;
+  color: #f8f9fa;
+  border-color: #495057;
+}
